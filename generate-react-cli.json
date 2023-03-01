@@ -17,7 +17,8 @@
     },
     "page": {
       "customTemplates": {
-        "component": "src/template/component/TemplateName.tsx"
+        "component": "src/template/component/TemplateName.tsx",
+        "style": "src/template/component/TemplateName.module.css"
       },
       "path": "src/pages",
       "withStyle": false,
