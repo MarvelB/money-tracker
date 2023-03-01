@@ -1,3 +1,6 @@
+// @ts-ignore: Cannot find css module
+import styles from './TemplateName.module.css';
+
 interface TemplateNameProps {}
 
 const TemplateName = ({ }: TemplateNameProps) => {
