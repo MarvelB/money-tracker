@@ -14,7 +14,10 @@ export const authReducer = (state: AuthContextModel, action: AuthAction) => {
 
     switch (action.type) {
         case AuthActionType.LOGIN:
-            newState = { ...newState, user: action.payload }
+            newState = { ...newState, user: action.payload };
+            break;
+        case AuthActionType.LOGOUT:
+            newState = { ...newState, user: null };
             break;
     }
 

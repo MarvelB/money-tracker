@@ -1,7 +1,7 @@
 import { projectAuth } from "firebase/config";
 import { useState } from "react";
 import { AuthActionType } from "types/auth-actions.model";
-import { UseAuthContext } from "./useAuthContext";
+import { useAuthContext } from "./useAuthContext";
 
 export interface UseSignUpType {
     signup:  (email: string, password: string, displayName: string) => Promise<void>;
@@ -12,7 +12,7 @@ export interface UseSignUpType {
 const useSignup = (): UseSignUpType => {
     const [error, setError] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const { dispatch } = UseAuthContext();
+    const { dispatch } = useAuthContext();
 
     const signup = async (email: string, password: string, displayName: string) => {
         setError("");
