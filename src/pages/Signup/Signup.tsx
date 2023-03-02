@@ -1,3 +1,4 @@
+import useSignup from 'hooks/useSignup';
 import { useState } from 'react';
 
 // @ts-ignore: Cannot find css module
@@ -11,10 +12,12 @@ const Signup = ({ }: SignupProps) => {
   const [password, setPassword] = useState<string>("");
   const [displayName, setDisplayName] = useState<string>("");
 
+  const { error, isLoading, signup } = useSignup();
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log(email, password, displayName);
+    signup(email, password, displayName);
   }
   
   return (
@@ -48,7 +51,11 @@ const Signup = ({ }: SignupProps) => {
         />
       </label>
 
-      <button className="btn">Signup</button>
+      <button
+        className="btn"
+        disabled={isLoading}>{isLoading ? 'Loading' : 'Signup'}</button>
+
+      {error && <p>{error}</p>}
 
     </form>
   );
