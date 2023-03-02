@@ -1,5 +1,5 @@
 import { projectAuth } from "firebase/config";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AuthActionType } from "types/auth-actions.model";
 import { useAuthContext } from "./useAuthContext";
 
@@ -10,6 +10,7 @@ export interface UseSignUpType {
 }
 
 const useSignup = (): UseSignUpType => {
+    const [isCancelled, setIsCancelled] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const { dispatch } = useAuthContext();
@@ -32,15 +33,25 @@ const useSignup = (): UseSignUpType => {
             // Dispatching login action
             dispatch({ type: AuthActionType.LOGIN, payload: res.user });
 
-            setError("");
-            setIsLoading(false);
+            if (!isCancelled) {
+                // Update state
+                setError("");
+                setIsLoading(false);
+            }
 
         } catch (err: any) {
-            console.log(err.message);
-            setError(err.message);
-            setIsLoading(false);
+            if (!isCancelled) {
+                console.log(err.message);
+                setError(err.message);
+                setIsLoading(false);
+            }
         }
     }
+
+    useEffect(() => {
+        // Cleanup function
+        return () => setIsCancelled(true);
+    }, []);
 
     return { error, isLoading, signup }
 }
