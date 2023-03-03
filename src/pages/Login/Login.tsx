@@ -1,3 +1,4 @@
+import { useLogIn } from 'hooks/useLogIn';
 import { useState } from 'react';
 
 // @ts-ignore: Cannot find css module
@@ -10,10 +11,12 @@ const Login = ({ }: LoginProps) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  const { error, login, isLoading } = useLogIn();
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log(email, password);
+    login(email, password);
   }
 
   return (
@@ -38,7 +41,12 @@ const Login = ({ }: LoginProps) => {
         />
       </label>
 
-      <button className="btn">Login</button>
+      <button
+        className="btn"
+        disabled={isLoading}
+      >{isLoading ? "Loading" : "Login"}</button>
+
+      {error && <p>{error}</p>}
 
     </form>
   );
