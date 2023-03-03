@@ -1,17 +1,31 @@
-import { useState } from "react";
+import { timestamp } from "firebase/config";
+import { useFirestore } from "hooks/useFirestore";
+import { useEffect, useState } from "react";
+import { TransactionModel } from "types";
 
-interface TransactionsFormProps {}
+interface TransactionsFormProps {
+    ownerId: string;
+}
 
-const TransactionsForm = ({ }: TransactionsFormProps) => {
+const TransactionsForm = ({ ownerId }: TransactionsFormProps) => {
 
     const [name, setName] = useState<string>("");
     const [amount, setAmount] = useState<string>("");
 
+    const { addDocument, response } = useFirestore<TransactionModel>("transactions");
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        console.log({ name, amount });
+        addDocument({ name, amount, createdAt: timestamp.fromDate(new Date()), ownerId });
     }
+
+    useEffect(() => {
+        if (response.success) {
+            setName("");
+            setAmount("");
+        }
+    }, [response.success]);
 
     return (
         <>

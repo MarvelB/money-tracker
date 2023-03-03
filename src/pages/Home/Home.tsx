@@ -1,16 +1,21 @@
+import { useAuthContext } from 'hooks/useAuthContext';
+import TransactionsForm from './TransactionsForm';
+
 // @ts-ignore: Cannot find css module
 import styles from './Home.module.css';
-import TransactionsForm from './TransactionsForm';
 
 interface HomeProps {}
 
 const Home = ({ }: HomeProps) => {
+
+  const { user } = useAuthContext();
+
   return (
     <div className={styles.container}>
       <div className={styles.content}>Transaction List</div>
 
       <div className={styles.sidebar}>
-        <TransactionsForm />
+        <TransactionsForm ownerId={user?.uid ?? ""} />
       </div>
     </div>
   );
