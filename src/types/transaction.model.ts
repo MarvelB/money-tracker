@@ -4,4 +4,5 @@ export interface TransactionModel {
     name: string;
     amount: string;
     createdAt: firebase.firestore.Timestamp;
+    ownerId: string;
 }
