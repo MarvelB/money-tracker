@@ -1,18 +1,29 @@
+import firebase from "firebase/app";
 import { projectFirestore } from "firebase/config";
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react";
 
 export interface UseCollectionType<T> {
     documents: T[];
     error: string;
 }
 
-export const useCollection = <T>(collection: string): UseCollectionType<T> => {
+export const useCollection = <T>(
+    collection: string, 
+    _query?: [string | firebase.firestore.FieldPath, firebase.firestore.WhereFilterOp, any]
+): UseCollectionType<T> => {
 
     const [documents, setDocuments] = useState<T[]>([]);
     const [error, setError] = useState<string>("");
 
+    // Next line is necessary otherwise this hook will enter an infinte loop
+    const query = useRef(_query).current;
+
     useEffect(() => {
-        let ref = projectFirestore.collection(collection);
+        let ref: firebase.firestore.Query<firebase.firestore.DocumentData> = projectFirestore.collection(collection);
+
+        if (query) {
+            ref = ref.where(...query);
+        }
 
         const unsubscribe = ref.onSnapshot((snapshot) => {
             let results: T[] = [];
@@ -31,7 +42,7 @@ export const useCollection = <T>(collection: string): UseCollectionType<T> => {
         // Cleanup function
         return () => unsubscribe();
 
-    }, [collection]);
+    }, [collection, query]);
 
     return { documents, error }
 }
