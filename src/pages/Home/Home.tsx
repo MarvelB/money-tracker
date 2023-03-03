@@ -12,7 +12,10 @@ interface HomeProps {}
 const Home = ({ }: HomeProps) => {
 
   const { user } = useAuthContext();
-  const { documents, error } = useCollection<WithID<TransactionModel>>("transactions");
+  const { documents, error } = useCollection<WithID<TransactionModel>>(
+    "transactions",
+    ["ownerId", "==", user?.uid]
+  );
 
   return (
     <div className={styles.container}>
