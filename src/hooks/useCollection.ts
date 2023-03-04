@@ -9,7 +9,8 @@ export interface UseCollectionType<T> {
 
 export const useCollection = <T>(
     collection: string, 
-    _query?: [string | firebase.firestore.FieldPath, firebase.firestore.WhereFilterOp, any]
+    _query?: [string | firebase.firestore.FieldPath, firebase.firestore.WhereFilterOp, any],
+    _orderBy?: [fieldPath: string | firebase.firestore.FieldPath, directionStr?: firebase.firestore.OrderByDirection]
 ): UseCollectionType<T> => {
 
     const [documents, setDocuments] = useState<T[]>([]);
@@ -17,12 +18,17 @@ export const useCollection = <T>(
 
     // Next line is necessary otherwise this hook will enter an infinte loop
     const query = useRef(_query).current;
+    const orderBy = useRef(_orderBy).current;
 
     useEffect(() => {
         let ref: firebase.firestore.Query<firebase.firestore.DocumentData> = projectFirestore.collection(collection);
 
         if (query) {
             ref = ref.where(...query);
+        }
+
+        if (orderBy) {
+            ref = ref.orderBy(...orderBy);
         }
 
         const unsubscribe = ref.onSnapshot((snapshot) => {
@@ -42,7 +48,7 @@ export const useCollection = <T>(
         // Cleanup function
         return () => unsubscribe();
 
-    }, [collection, query]);
+    }, [collection, query, orderBy]);
 
     return { documents, error }
 }

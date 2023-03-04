@@ -14,7 +14,8 @@ const Home = ({ }: HomeProps) => {
   const { user } = useAuthContext();
   const { documents, error } = useCollection<WithID<TransactionModel>>(
     "transactions",
-    ["ownerId", "==", user?.uid]
+    ["ownerId", "==", user?.uid],
+    ["createdAt", "desc"]
   );
 
   return (
