@@ -7,6 +7,7 @@ const enum UseFirestoreActionType {
     IS_LOADING = "IS_LOADING",
     DOCUMENT_ADDED = "DOCUMENT_ADDED",
     ERROR = "ERROR",
+    DOCUMENT_DELETED = "DOCUMENT_DELETED",
 }
 
 interface UseFirestoreAction {
@@ -33,6 +34,10 @@ const firestoreReducer = (state: UseFirestoreState, action: UseFirestoreAction) 
             break;
         case UseFirestoreActionType.ERROR:
             newState = {isLoading: false, success: false, error: action.payload, document: null};
+            break;
+        case UseFirestoreActionType.DOCUMENT_DELETED:
+            newState = {isLoading: false, success: true, error: "", document: null};
+            break;
     }
 
     return newState;
@@ -70,7 +75,17 @@ export const useFirestore = <T>(collection: string): UseFirestoreType<T> => {
         }
     }
 
-    const deleteDocument = async (id: string) => {}
+    const deleteDocument = async (id: string) => {
+        dispatch({type: UseFirestoreActionType.IS_LOADING, payload: null});
+
+        try {
+            await ref.doc(id).delete();
+
+            dispatchIfNotCancelled({ type: UseFirestoreActionType.DOCUMENT_DELETED, payload: null });
+        } catch (err: any) {
+            dispatchIfNotCancelled({type: UseFirestoreActionType.ERROR, payload: err.message});
+        }
+    }
 
     useEffect(() => {
         return () => setIsCancelled(true);
